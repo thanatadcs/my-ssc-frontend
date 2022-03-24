@@ -7,12 +7,12 @@ Vue.use(VueRouter);
 const routes = [
   {
     path: "/",
-    name: "home",
+    name: "Home",
     component: Home,
   },
   {
     path: "/about",
-    name: "about",
+    name: "About",
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
@@ -21,7 +21,7 @@ const routes = [
   },
   {
     path: "/login",
-    name: "login",
+    name: "Login",
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
@@ -32,6 +32,18 @@ const routes = [
 
 const router = new VueRouter({
   routes,
+});
+
+// Setup beforeEach hook to check the logged in sync the login states with backend
+router.beforeEach(async (to, from, next) => {
+  // get login state using whoami and axios
+  let response = await Vue.axios.get("/api/whoami");
+  console.log(response);
+  if (to.name !== "Login") {
+    next({ name: "Login" });
+  } else {
+    next();
+  }
 });
 
 export default router;
