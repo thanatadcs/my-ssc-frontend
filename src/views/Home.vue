@@ -3,13 +3,7 @@
     <h2>Home Page</h2>
     <ul>
       <li>
-        <router-link to="/">Go to Home</router-link>
-      </li>
-      <li>
         <router-link to="/about">Go to About</router-link>
-      </li>
-      <li>
-        <router-link to="/login">Go to Login</router-link>
       </li>
     </ul>
     <div class="player">
@@ -39,6 +33,7 @@
 <script>
 import Vue from "vue";
 import VueVideoPlayer from "vue-video-player";
+import store from "@/store";
 
 // require videojs style
 import "video.js/dist/video-js.css";
@@ -95,8 +90,14 @@ export default {
     onPlayerPlaying(player) {
       console.log("player Playing!", player);
     },
-    onPlayerTimeupdate(player) {
-      console.log("player Timeupdate!", player.currentTime());
+    async onPlayerTimeupdate(player) {
+      console.log(player.currentTime());
+      let formData = new FormData();
+      formData.append("username", store.state.username);
+      formData.append("timestamp", player.currentTime());
+
+      store.commit("setTimestamp", player.currentTime());
+      await Vue.axios.post("/api/update", formData);
     },
     onPlayerCanplay(player) {
       console.log("player Canplay!", player);
@@ -112,7 +113,7 @@ export default {
     playerReadied(player) {
       // seek to 10s
       console.log("example player 1 readied", player);
-      player.currentTime(10);
+      player.currentTime(store.state.timestamp);
       // console.log('example 01: the player is readied', player)
     },
   },

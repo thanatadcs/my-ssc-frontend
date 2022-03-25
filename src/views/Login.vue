@@ -65,7 +65,6 @@ export default {
         formData.append("password", this.password);
 
         let response = await Vue.axios.post("/api/login", formData);
-        // need to update states by calling who
         if (response.data.success) {
           await this.$router.push({ path: "/" });
         } else {
