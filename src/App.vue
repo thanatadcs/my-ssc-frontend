@@ -9,7 +9,7 @@
 
       <span class="mr-2">{{ $store.state.name }}</span>
       <v-btn
-        :disabled="!$store.state.isLoggedIn"
+        :disabled="!$store.state.loggedIn"
         color="success"
         class="mr-4"
         @click="logout"
@@ -21,7 +21,7 @@
         <v-dialog v-model="dialog" width="500">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
-              :disabled="!$store.state.isLoggedIn"
+              :disabled="!$store.state.loggedIn"
               color="red lighten-2"
               dark
               v-bind="attrs"
@@ -78,6 +78,7 @@ export default {
       let response = await Vue.axios.get("/api/logout");
       // need to update states by calling who
       if (response.data.success) {
+        await store.dispatch("clearUserState");
         await this.$router.push({ path: "/login" });
       }
     },

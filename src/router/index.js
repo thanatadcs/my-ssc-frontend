@@ -40,13 +40,13 @@ router.beforeEach(async (to, from, next) => {
   // get login state using whoami and axios
   let response = await Vue.axios.get("/api/whoami");
   // response.data is out payload
-  await store.dispatch("setLoggedInUser", response.data);
-  let isLoggedIn = store.state.isLoggedIn;
-  if (to.name === "Login" && isLoggedIn) {
+  await store.dispatch("setUserState", response.data);
+  let loggedIn = store.state.loggedIn;
+  if (to.name === "Login" && loggedIn) {
     next({ name: "Home" });
   }
   // make sure if user i logged, user will not be able to see login page
-  if (to.name !== "Login" && !isLoggedIn) {
+  if (to.name !== "Login" && !loggedIn) {
     // redirect to login page
     next({ name: "Login" });
   } else {

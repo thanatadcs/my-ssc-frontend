@@ -5,10 +5,10 @@
         User created successfully. Now you can login.
       </v-alert>
       <v-alert v-if="createError" dense outlined type="error">
-        Error: username already taken.
+        {{ errorMessage }}
       </v-alert>
       <v-alert v-if="loginError" dense outlined type="error">
-        Error: username/password is incorrect.
+        Error: Username or password are incorrect.
       </v-alert>
       <v-form ref="form" v-model="valid" lazy-validation>
         <v-text-field
@@ -49,9 +49,14 @@ export default {
     createSuccess: false,
     createError: false,
     loginError: false,
+    errorMessage: "",
   }),
-
   methods: {
+    clearAlert() {
+      this.createSuccess = false;
+      this.createError = false;
+      this.loginError = false;
+    },
     async submit() {
       if (this.$refs.form.validate()) {
         // submit to backend to authenticate
@@ -64,6 +69,7 @@ export default {
         if (response.data.success) {
           await this.$router.push({ path: "/" });
         } else {
+          this.clearAlert();
           this.loginError = true;
         }
       }
@@ -77,11 +83,12 @@ export default {
 
         let response = await Vue.axios.post("/api/create", formData);
         if (response.data.success) {
+          this.clearAlert();
           this.createSuccess = true;
-          this.createError = false;
         } else {
-          this.createSuccess = false;
+          this.clearAlert();
           this.createError = true;
+          this.errorMessage = response.data.message;
         }
       }
     },
