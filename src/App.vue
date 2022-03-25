@@ -24,7 +24,12 @@
       <v-spacer></v-spacer>
 
       <span class="mr-2">{{ $store.state.name }}</span>
-      <v-btn :disabled="!valid" color="success" class="mr-4" @click="logout">
+      <v-btn
+        :disabled="!$store.state.isLoggedIn"
+        color="success"
+        class="mr-4"
+        @click="logout"
+      >
         Logout
         <v-icon>mdi-open-in-new</v-icon>
       </v-btn>
@@ -42,16 +47,14 @@ import Vue from "vue";
 export default {
   name: "App",
 
-  data: () => ({
-    valid: true,
-  }),
+  data: () => ({}),
 
   methods: {
     async logout() {
       let response = await Vue.axios.get("/api/logout");
       // need to update states by calling who
       if (response.data.success) {
-        this.$router.push({ path: "/login" });
+        await this.$router.push({ path: "/login" });
       }
     },
   },

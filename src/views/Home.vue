@@ -37,7 +37,6 @@
 </template>
 
 <script>
-// import with ES6
 import Vue from "vue";
 import VueVideoPlayer from "vue-video-player";
 
@@ -65,14 +64,9 @@ export default {
         sources: [
           {
             type: "video/mp4",
-            // mp4
             src: "http://localhost:8082/hls/sample1.mp4/index.m3u8",
-            // webm
-            // src: "https://cdn.theguardian.tv/webM/2015/07/20/150716YesMen_synd_768k_vp8.webm"
           },
         ],
-        poster:
-          "https://surmon-china.github.io/vue-quill-editor/static/images/surmon-1.jpg",
       },
     };
   },
