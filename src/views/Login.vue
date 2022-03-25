@@ -7,6 +7,9 @@
       <v-alert v-if="createError" dense outlined type="error">
         Error: username already taken.
       </v-alert>
+      <v-alert v-if="loginError" dense outlined type="error">
+        Error: username/password is incorrect.
+      </v-alert>
       <v-form ref="form" v-model="valid" lazy-validation>
         <v-text-field
           v-model="username"
@@ -45,6 +48,7 @@ export default {
     passwordRules: [(v) => !!v || "Password is required"],
     createSuccess: false,
     createError: false,
+    loginError: false,
   }),
 
   methods: {
@@ -59,6 +63,8 @@ export default {
         // need to update states by calling who
         if (response.data.success) {
           await this.$router.push({ path: "/" });
+        } else {
+          this.loginError = true;
         }
       }
     },
