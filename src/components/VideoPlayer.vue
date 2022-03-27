@@ -4,7 +4,6 @@
       ref="videoPlayer"
       class="video-js vjs-theme-city vjs-fluid"
       @timeupdate="onPlayerTimeupdate($event)"
-      @ready="playerReadied"
     ></video>
   </div>
 </template>
@@ -47,6 +46,7 @@ export default {
       this.options,
       function onPlayerReady() {
         console.log("onPlayerReady", this);
+        this.currentTime(store.state.timestamp);
       }
     );
   },
@@ -56,20 +56,13 @@ export default {
     }
   },
   methods: {
+    // eslint-disable-next-line no-unused-vars
     async onPlayerTimeupdate(player) {
-      console.log(player.currentTime());
       let formData = new FormData();
       formData.append("username", store.state.username);
-      formData.append("timestamp", player.currentTime());
-
-      store.commit("setTimestamp", player.currentTime());
+      formData.append("timestamp", this.player.currentTime());
       await Vue.axios.post("/api/update", formData);
-    },
-    playerReadied(player) {
-      // seek to 10s
-      console.log("example player 1 readied", player);
-      player.currentTime(store.state.timestamp);
-      // console.log('example 01: the player is readied', player)
+      console.log(this.player.currentTime());
     },
   },
 };
