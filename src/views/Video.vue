@@ -28,7 +28,7 @@ export default {
         controls: true,
         sources: [
           {
-            src: "http://localhost:8082/hls/sample1.mp4/index.m3u8",
+            src: "http://157.245.155.41:8082/hls/sample1.mp4/index.m3u8",
             type: "application/x-mpegurl",
           },
         ],
