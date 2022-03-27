@@ -6,33 +6,32 @@
         <router-link to="/about">Go to About</router-link>
       </li>
     </ul>
-    <div class="player">
-      <video-player
-        class="vjs-custom-skin"
-        ref="videoPlayer"
-        :options="playerOptions"
-        :playsinline="true"
-        @play="onPlayerPlay($event)"
-        @pause="onPlayerPause($event)"
-        @ended="onPlayerEnded($event)"
-        @loadeddata="onPlayerLoadeddata($event)"
-        @waiting="onPlayerWaiting($event)"
-        @playing="onPlayerPlaying($event)"
-        @timeupdate="onPlayerTimeupdate($event)"
-        @canplay="onPlayerCanplay($event)"
-        @canplaythrough="onPlayerCanplaythrough($event)"
-        @ready="playerReadied"
-        @statechanged="playerStateChanged($event)"
-      >
-        >
-      </video-player>
-    </div>
+    <video-player
+      data-setup="{'controls':true}"
+      class="vjs-custom-skin"
+      ref="videoPlayer"
+      :options="playerOptions"
+      :playsinline="true"
+      customEventName="customstatechangedeventname"
+      @play="onPlayerPlay($event)"
+      @pause="onPlayerPause($event)"
+      @ended="onPlayerEnded($event)"
+      @waiting="onPlayerWaiting($event)"
+      @playing="onPlayerPlaying($event)"
+      @loadeddata="onPlayerLoadeddata($event)"
+      @timeupdate="onPlayerTimeupdate($event)"
+      @canplay="onPlayerCanplay($event)"
+      @canplaythrough="onPlayerCanplaythrough($event)"
+      @statechanged="playerStateChanged($event)"
+      @ready="playerReadied"
+    >
+    </video-player>
   </v-container>
 </template>
 
 <script>
 import Vue from "vue";
-import VueVideoPlayer from "vue-video-player";
+import VueVideoPlayer from "vue-video-player-videojs-7";
 import store from "@/store";
 
 // require videojs style
@@ -48,28 +47,29 @@ Vue.use(
 export default {
   data() {
     return {
-      // videojs options
       playerOptions: {
-        start: 5,
-        height: "360",
-        autoplay: true,
+        // videojs options
         muted: true,
         language: "en",
         playbackRates: [0.7, 1.0, 1.5, 2.0],
         sources: [
           {
-            type: "video/mp4",
-            src: "http://localhost:8082/hls/sample1.mp4/index.m3u8",
+            type: "application/x-mpegurl",
+            src: "http://157.245.155.41:8082/hls/sample1.mp4/index.m3u8",
           },
         ],
+        poster: "/static/images/author.jpg",
       },
     };
   },
-
-  name: "Home",
-
-  components: {},
-
+  mounted() {
+    console.log("this is current player instance object", this.player);
+  },
+  computed: {
+    player() {
+      return this.$refs.videoPlayer.player;
+    },
+  },
   methods: {
     // listen event
     onPlayerPlay(player) {
@@ -78,17 +78,11 @@ export default {
     onPlayerPause(player) {
       console.log("player pause!", player);
     },
-    onPlayerEnded(player) {
-      console.log("player ended!", player);
-    },
-    onPlayerLoadeddata(player) {
-      console.log("player Loadeddata!", player);
-    },
-    onPlayerWaiting(player) {
-      console.log("player Waiting!", player);
-    },
-    onPlayerPlaying(player) {
-      console.log("player Playing!", player);
+    // ...player event
+
+    // or listen state event
+    playerStateChanged(playerCurrentState) {
+      console.log("player current update state", playerCurrentState);
     },
     async onPlayerTimeupdate(player) {
       console.log(player.currentTime());
@@ -98,16 +92,6 @@ export default {
 
       store.commit("setTimestamp", player.currentTime());
       await Vue.axios.post("/api/update", formData);
-    },
-    onPlayerCanplay(player) {
-      console.log("player Canplay!", player);
-    },
-    onPlayerCanplaythrough(player) {
-      console.log("player Canplaythrough!", player);
-    },
-    // or listen state event
-    playerStateChanged(playerCurrentState) {
-      console.log("player current update state", playerCurrentState);
     },
     // player is ready
     playerReadied(player) {
